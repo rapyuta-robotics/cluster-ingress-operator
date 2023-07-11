@@ -39,6 +39,16 @@ spec:
             value: /etc/pki/tls/private
           - name: DEFAULT_DESTINATION_CA_PATH
             value: /var/run/configmaps/service-ca/service-ca.crt
+          - name: TEMPLATE_FILE
+            value: /var/lib/haproxy/conf/custom/haproxy-config.template
+          - name: ROUTER_DEFAULT_CLIENT_TIMEOUT
+            value: 90s
+          - name: ROUTER_DEFAULT_SERVER_TIMEOUT
+            value: 180s
+          - name: RELOAD_INTERVAL
+            value: 30s
+          - name: ROUTER_HARD_STOP_AFTER
+            value: 180s
           livenessProbe:
             initialDelaySeconds: 10
             httpGet:
@@ -57,14 +67,21 @@ spec:
           - mountPath: /etc/pki/tls/private
             name: default-certificate
             readOnly: true
+          - mountPath: /var/lib/haproxy/conf/custom
+            name: config-volume
           - mountPath: /var/run/configmaps/service-ca
             name: service-ca-bundle
             readOnly: true
+      securityContext:
+        runAsUser: 0
       volumes:
       - name: default-certificate
         secret:
           defaultMode: 420
           # SecretName is set at run-time.
+      - configMap:
+          name: customrouter
+        name: config-volume
       - name: service-ca-bundle
         configMap:
           items:

@@ -83,6 +83,8 @@ const (
 	// openstackInternalLBAnnotation is the annotation used on a service to specify an
 	// OpenStack load balancer as being internal.
 	openstackInternalLBAnnotation = "service.beta.kubernetes.io/openstack-internal-load-balancer"
+
+	serviceLoadBalancerIPAnnotation = "service.beta.kubernetes.io/service-loadbalancer-ip"
 )
 
 var (
@@ -167,6 +169,12 @@ func desiredLoadBalancerService(ci *operatorv1.IngressController, deploymentRef 
 
 	service.Namespace = name.Namespace
 	service.Name = name.Name
+
+	if ci.Annotations != nil {
+		if ip, ok := ci.Annotations[serviceLoadBalancerIPAnnotation]; ok {
+			service.Spec.LoadBalancerIP = ip
+		}
+	}
 
 	if service.Labels == nil {
 		service.Labels = map[string]string{}
