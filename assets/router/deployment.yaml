@@ -41,6 +41,14 @@ spec:
             value: /var/run/configmaps/service-ca/service-ca.crt
           - name: TEMPLATE_FILE
             value: /var/lib/haproxy/conf/custom/haproxy-config.template
+          - name: ROUTER_DEFAULT_CLIENT_TIMEOUT
+            value: 90s
+          - name: ROUTER_DEFAULT_SERVER_TIMEOUT
+            value: 180s
+          - name: RELOAD_INTERVAL
+            value: 30s
+          - name: ROUTER_HARD_STOP_AFTER
+            value: 180s
           livenessProbe:
             initialDelaySeconds: 10
             httpGet:
